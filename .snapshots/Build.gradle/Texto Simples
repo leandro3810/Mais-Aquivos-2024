@@ -1,0 +1,14 @@
+my-gradle-project/
+├── build.gradle
+├── settings.gradle
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/
+│   │   │       └── example/
+│   │   │           └── Main.java
+│   ├── test/
+│       ├── java/
+│           └── com/
+│               └── example/
+│                   └── MainTest.java
