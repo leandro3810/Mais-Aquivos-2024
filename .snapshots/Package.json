@@ -1,0 +1,14 @@
+{
+  "name": "mais-aquivos-2024",
+  "version": "1.0.0",
+  "description": "Diretório de Snapshots - Este diretório contém snapshots do seu código para interações de IA.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"No test specified\" && exit 1"
+  },
+  "author": "leandro3810",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
+}
