@@ -1,0 +1,31 @@
+# Ignorar arquivos temporários e binários
+*.tmp
+*.log
+*.swp
+*.pid
+
+# Ignorar dependências locais e arquivos de build
+node_modules
+dist
+build
+target
+out
+
+# Ignorar arquivos de controle de versão
+.git
+.gitignore
+.gitmodules
+
+# Ignorar configurações de sistema operacional
+.DS_Store
+Thumbs.db
+
+# Ignorar arquivos de IDEs e editores
+.vscode
+.idea
+*.iml
+
+# Ignorar credenciais e arquivos sensíveis
+.env
+*.key
+*.pem
