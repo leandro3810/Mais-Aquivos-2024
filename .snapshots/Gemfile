@@ -1,0 +1,23 @@
+# Especifica a fonte para as gems
+source 'https://rubygems.org'
+
+# Especifica a versão do Ruby
+ruby '3.2.0'
+
+# Dependências do projeto
+gem 'rails', '~> 7.0'
+gem 'pg', '~> 1.4' # Para PostgreSQL como banco de dados
+gem 'puma', '~> 6.0' # Servidor de aplicação
+gem 'sass-rails', '>= 6'
+gem 'webpacker', '~> 5.4'
+
+# Gemas de desenvolvimento e teste
+group :development, :test do
+  gem 'rspec-rails', '~> 6.0'
+  gem 'pry', '~> 0.14.1' # Para depuração interativa
+end
+
+# Gemas apenas para produção
+group :production do
+  gem 'uglifier', '>= 4.2.0'
+end
