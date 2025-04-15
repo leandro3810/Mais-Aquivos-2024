@@ -1,0 +1,26 @@
+# Define o comportamento de final de linha para arquivos de texto
+*.txt text
+*.md text
+*.java text eol=lf
+*.cs text eol=lf
+*.sh text eol=lf
+*.bat text eol=crlf
+
+# Tratamento especial para arquivos binários
+*.png binary
+*.jpg binary
+*.gif binary
+
+# Ignorar alterações em permissões de arquivo
+* -crlf
+
+# Normalizar arquivos JSON
+*.json text eol=lf
+
+# Especificar linguagens para estatísticas linguísticas do GitHub
+*.java linguist-language=Java
+*.py linguist-language=Python
+*.xml linguist-language=XML
+
+# Evitar que arquivos grandes sejam reescritos em merge
+/path/to/large-file merge=ours
