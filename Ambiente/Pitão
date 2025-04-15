@@ -1,0 +1,5 @@
+import tensorflow as tf
+import torch
+
+print("TensorFlow versão:", tf.__version__)
+print("PyTorch versão:", torch.__version__)
