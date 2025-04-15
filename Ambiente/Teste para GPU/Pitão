@@ -1,0 +1,5 @@
+import tensorflow as tf
+print("GPU disponível:", tf.config.list_physical_devices('GPU'))
+
+import torch
+print("GPU disponível:", torch.cuda.is_available())
