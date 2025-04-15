@@ -1,0 +1,21 @@
+# Versão mínima do CMake necessária
+cmake_minimum_required(VERSION 3.10)
+
+# Nome do projeto
+project(NomeDoProjeto LANGUAGES CXX)
+
+# Definir a versão do padrão C++
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+# Adicionar o executável
+add_executable(NomeDoExecutavel
+    src/main.cpp
+    src/arquivo_adicional.cpp
+)
+
+# Incluir diretórios de cabeçalho (se aplicável)
+target_include_directories(NomeDoExecutavel PRIVATE include)
+
+# Adicionar bibliotecas externas (se necessário)
+# Exemplo: target_link_libraries(NomeDoExecutavel PRIVATE NomeDaBiblioteca)
