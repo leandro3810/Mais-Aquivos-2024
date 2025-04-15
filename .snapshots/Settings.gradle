@@ -1,0 +1,6 @@
+// Define o nome do projeto
+rootProject.name = 'MeuProjeto'
+
+// Inclua módulos/subprojetos, se houver
+// Exemplo: include('modulo-app', 'modulo-core')
+// include(':modulo1', ':modulo2')
