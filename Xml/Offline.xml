@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<offlineConfiguration>
+    <settings>
+        <setting name="cacheEnabled">true</setting>
+        <setting name="autoSync">false</setting>
+        <setting name="lastSyncDate">2025-04-18T18:14:36</setting>
+    </settings>
+    <data>
+        <user>
+            <id>12345</id>
+            <name>Leandro</name>
+            <email>leandro@example.com</email>
+        </user>
+        <items>
+            <item id="1" name="Item A" />
+            <item id="2" name="Item B" />
+        </items>
+    </data>
+</offlineConfiguration>
