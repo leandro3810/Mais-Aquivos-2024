@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Migration xmlns="urn:schemas-microsoft-com:usmt:config:v4">
+  <!-- Configuração de migração de aplicativos -->
+  <Applications>
+    <!-- Exemplo: Microsoft Office -->
+    <Application Id="Microsoft Office">
+      <Location>
+        <Path>C:\Program Files\Microsoft Office</Path>
+        <Recursive>true</Recursive>
+      </Location>
+      <Files>
+        <File Mask="*.docx" Recursive="true" />
+        <File Mask="*.xlsx" Recursive="true" />
+      </Files>
+      <Settings>
+        <Registry>
+          <Key Recursive="true">HKCU\Software\Microsoft\Office</Key>
+        </Registry>
+      </Settings>
+    </Application>
+
+    <!-- Exemplo: Google Chrome -->
+    <Application Id="Google Chrome">
+      <Location>
+        <Path>%LOCALAPPDATA%\Google\Chrome\User Data</Path>
+        <Recursive>true</Recursive>
+      </Location>
+      <Files>
+        <File Mask="*.json" Recursive="true" />
+        <File Mask="*.sqlite" Recursive="true" />
+      </Files>
+    </Application>
+
+    <!-- Exemplo: Adobe Reader -->
+    <Application Id="Adobe Reader">
+      <Location>
+        <Path>C:\Program Files\Adobe\Acrobat Reader</Path>
+        <Recursive>true</Recursive>
+      </Location>
+      <Settings>
+        <Registry>
+          <Key Recursive="true">HKCU\Software\Adobe\Acrobat Reader</Key>
+        </Registry>
+      </Settings>
+    </Application>
+  </Applications>
+</Migration>
