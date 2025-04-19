@@ -1,8 +1,0 @@
-<reagente>
-    <nome>Exemplo Reagente</nome>
-    <codigo>12345</codigo>
-    <fabricante>Fabricante Exemplo</fabricante>
-    <quantidade>100</quantidade>
-    <unidade>ml</unidade>
-    <descricao>Descrição do reagente</descricao>
-</reagente>
