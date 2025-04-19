@@ -1,0 +1,9 @@
+{
+  "snapshot": {
+    "enabled": true,
+    "interval": 300,
+    "path": "/path/to/snapshots",
+    "retention": 5,
+    "compression": "gzip"
+  }
+}
