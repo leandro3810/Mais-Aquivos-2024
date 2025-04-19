@@ -1,9 +1,0 @@
-# Python
-__pycache__/
-*.py[cod]
-*.ipynb_checkpoints
-
-# Ambientes Virtuais
-env/
-venv/
-.venv/
