@@ -1,0 +1,12 @@
+<apps>
+    <app>
+        <name>App One</name>
+        <version>1.0</version>
+        <status>Compatible</status>
+    </app>
+    <app>
+        <name>App Two</name>
+        <version>2.1</version>
+        <status>Incompatible</status>
+    </app>
+</apps>
