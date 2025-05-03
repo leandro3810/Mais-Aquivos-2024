@@ -1,0 +1,5 @@
+<applications>
+    <application name="App1" version="1.0" compatibility="Compatível"/>
+    <application name="App2" version="2.1" compatibility="Incompatível"/>
+    <application name="App3" version="1.5" compatibility="Parcialmente Compatível"/>
+</applications>
