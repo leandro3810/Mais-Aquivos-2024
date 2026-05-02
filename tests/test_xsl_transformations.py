@@ -116,7 +116,7 @@ class TestAppcompatBidiXsl(unittest.TestCase):
 
     def test_default_bidi_direction_ltr(self):
         result = _transform(self.xslt, self._xml())
-        self.assertIn("ltr", result)
+        self.assertIn("direction: ltr;", result)
 
     def test_custom_bidi_direction_rtl(self):
         result = _transform(
@@ -124,7 +124,7 @@ class TestAppcompatBidiXsl(unittest.TestCase):
             self._xml(),
             **{"bidi-direction": etree.XSLT.strparam("rtl")},
         )
-        self.assertIn("rtl", result)
+        self.assertIn("direction: rtl;", result)
 
     def test_item_title_rendered(self):
         result = _transform(self.xslt, self._xml(items=[("My Title", "Content")]))
