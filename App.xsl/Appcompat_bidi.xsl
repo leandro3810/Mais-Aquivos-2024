@@ -32,7 +32,10 @@
 
     <!-- Transformação para texto -->
     <xsl:template match="text">
-        <span style="direction: <xsl:value-of select='$bidi-direction' />;">
+        <span>
+            <xsl:attribute name="style">
+                <xsl:value-of select="concat('direction: ', $bidi-direction, ';')" />
+            </xsl:attribute>
             <xsl:value-of select="." />
         </span>
     </xsl:template>
