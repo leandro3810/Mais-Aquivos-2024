@@ -1,4 +1,4 @@
-# Mais Aquivos 2024 — Projeto de automação
+# Mais Arquivos 2024 — Projeto de automação
 
 Este repositório reúne arquivos de snapshot, transformações XSLT e um agente Python de automação para validar o projeto.
 
@@ -46,13 +46,13 @@ pip install -r requirements-test.txt
 python3 ai_project_agent.py --repo-root /home/runner/work/Mais-Aquivos-2024/Mais-Aquivos-2024
 
 # Via comando CLI instalado pelo pyproject
-mais-aquivos-agent --repo-root /home/runner/work/Mais-Aquivos-2024/Mais-Aquivos-2024
+mais-arquivos-agent --repo-root /home/runner/work/Mais-Aquivos-2024/Mais-Aquivos-2024
 
 # Saída em JSON
-mais-aquivos-agent --output json
+mais-arquivos-agent --output json
 
 # Gravar resumo em arquivo (exige aprovação explícita)
-mais-aquivos-agent --summary-file reports/agent-summary.txt --approve-write
+mais-arquivos-agent --summary-file reports/agent-summary.txt --approve-write
 ```
 
 ## Testes
