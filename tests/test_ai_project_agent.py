@@ -2,21 +2,20 @@
 
 from __future__ import annotations
 
-import importlib.util
 import json
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 
 
-MODULE_PATH = Path(__file__).resolve().parent.parent / "ai_project_agent.py"
-MODULE_SPEC = importlib.util.spec_from_file_location("ai_project_agent", MODULE_PATH)
-ai_project_agent = importlib.util.module_from_spec(MODULE_SPEC)
-assert MODULE_SPEC and MODULE_SPEC.loader
-MODULE_SPEC.loader.exec_module(ai_project_agent)
+REPO_ROOT = Path(__file__).resolve().parent.parent
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+import ai_project_agent
 
 AgentError = ai_project_agent.AgentError
 AgentMemory = ai_project_agent.AgentMemory
