@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mais-arquivos-agent"
+version = "0.1.0"
+description = "Projeto de automação para validação de snapshots e arquivos de configuração."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+  { name = "Mais Arquivos 2024 Contributors" }
+]
+
+[project.scripts]
+mais-arquivos-agent = "ai_project_agent:main"
+
+[tool.setuptools]
+py-modules = ["ai_project_agent"]
