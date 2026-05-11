@@ -140,3 +140,6 @@
 /warning.gif
 /wicadevicefilters.xml
 /xp
+
+__pycache__/
+*.pyc
