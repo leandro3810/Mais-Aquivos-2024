@@ -1,3 +1,14 @@
+Metadata-Version: 2.4
+Name: mais-aquivos-agent
+Version: 0.1.0
+Summary: Projeto de automação para validação de snapshots e arquivos de configuração.
+Author: Mais Aquivos 2024 Contributors
+License: MIT
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Dynamic: license-file
+
 # Mais Aquivos 2024 — Projeto de automação
 
 Este repositório reúne arquivos de snapshot, transformações XSLT e um agente Python de automação para validar o projeto.

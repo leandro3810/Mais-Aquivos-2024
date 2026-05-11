@@ -1,0 +1,2 @@
+[console_scripts]
+mais-aquivos-agent = ai_project_agent:main
