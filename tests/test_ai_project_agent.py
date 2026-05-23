@@ -179,6 +179,38 @@ class TestAgentOrchestrator(unittest.TestCase):
         self.assertEqual(summary["status"], "failed")
         self.assertFalse(summary["config_validation"]["success"])
 
+    def test_summary_contains_version(self):
+        summary = self.orchestrator.execute(run_tests=False, run_config_validation=False)
+        self.assertIn("version", summary)
+        self.assertEqual(summary["version"], ai_project_agent.__version__)
+
+    def test_summary_contains_timestamps(self):
+        summary = self.orchestrator.execute(run_tests=False, run_config_validation=False)
+        self.assertIn("started_at", summary)
+        self.assertIn("duration_seconds", summary)
+        self.assertIsNotNone(summary["started_at"])
+        self.assertGreaterEqual(summary["duration_seconds"], 0)
+
+    def test_skip_analyze_changes(self):
+        summary = self.orchestrator.execute(
+            run_tests=False,
+            run_config_validation=False,
+            run_analyze_changes=False,
+        )
+        self.assertIsNone(summary["changes"])
+        self.assertEqual(summary["status"], "success")
+
+    def test_render_text_includes_version_and_timestamps(self):
+        summary = self.orchestrator.execute(
+            run_tests=False,
+            run_config_validation=False,
+            test_command=["python3", "-c", "print('ok')"],
+        )
+        rendered = AgentOrchestrator.render_text_summary(summary)
+        self.assertIn(ai_project_agent.__version__, rendered)
+        self.assertIn("Iniciado em:", rendered)
+        self.assertIn("Duração:", rendered)
+
 
 if __name__ == "__main__":
     unittest.main()
