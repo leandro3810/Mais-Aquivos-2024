@@ -17,6 +17,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable
 
+__version__ = "0.2.0"
+
 
 DEFAULT_TEST_COMMAND = ["python3", "-m", "unittest", "discover", "-s", "tests", "-v"]
 DEFAULT_CONFIG_FILES = [
@@ -194,16 +196,24 @@ class AgentOrchestrator:
         self,
         run_tests: bool = True,
         run_config_validation: bool = True,
+        run_analyze_changes: bool = True,
         test_command: list[str] | None = None,
     ) -> dict:
-        summary = {
+        started_at = datetime.now(timezone.utc)
+        summary: dict = {
             "workflow": "mvp",
-            "changes": self.tools.analyze_changes(),
+            "version": __version__,
+            "started_at": started_at.isoformat(timespec="seconds"),
+            "duration_seconds": None,
+            "changes": None,
             "tests": None,
             "config_validation": None,
             "memory": [],
             "status": "success",
         }
+
+        if run_analyze_changes:
+            summary["changes"] = self.tools.analyze_changes()
 
         if run_tests:
             summary["tests"] = self.tools.run_tests(command=test_command)
@@ -215,16 +225,24 @@ class AgentOrchestrator:
             if not summary["config_validation"]["success"]:
                 summary["status"] = "failed"
 
+        summary["duration_seconds"] = round(
+            (datetime.now(timezone.utc) - started_at).total_seconds(), 3
+        )
         summary["memory"] = [record.__dict__ for record in self.tools.memory.recent()]
         return summary
 
     @staticmethod
     def render_text_summary(summary: dict) -> str:
         lines = [
-            "Resumo do agente (MVP)",
+            f"Resumo do agente (MVP) v{summary.get('version', '')}",
+            f"Iniciado em: {summary.get('started_at', '-')}",
+            f"Duração: {summary.get('duration_seconds', '-')}s",
             f"Status final: {summary['status']}",
-            f"Arquivos alterados detectados: {len(summary['changes']['changed_files'])}",
         ]
+
+        changes = summary.get("changes")
+        if changes is not None:
+            lines.append(f"Arquivos alterados detectados: {len(changes['changed_files'])}")
 
         if summary.get("tests") is not None:
             lines.append(
@@ -244,12 +262,22 @@ class AgentOrchestrator:
 
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Agente de automação do projeto")
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"%(prog)s {__version__}",
+    )
     parser.add_argument("--repo-root", default=".", help="Raiz do repositório")
     parser.add_argument("--skip-tests", action="store_true", help="Pula etapa de testes")
     parser.add_argument(
         "--skip-config-validation",
         action="store_true",
         help="Pula validação de arquivos JSON",
+    )
+    parser.add_argument(
+        "--skip-analyze-changes",
+        action="store_true",
+        help="Pula análise de mudanças no repositório",
     )
     parser.add_argument("--output", choices=["text", "json"], default="text")
     parser.add_argument("--summary-file", help="Arquivo de saída opcional para o resumo")
@@ -271,6 +299,7 @@ def main() -> int:
     summary = orchestrator.execute(
         run_tests=not args.skip_tests,
         run_config_validation=not args.skip_config_validation,
+        run_analyze_changes=not args.skip_analyze_changes,
     )
 
     if args.output == "json":

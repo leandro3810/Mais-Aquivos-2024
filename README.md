@@ -42,14 +42,20 @@ pip install -r requirements-test.txt
 ## Como executar o agente
 
 ```bash
+# Exibir versão
+mais-arquivos-agent --version
+
 # Via script Python
 python3 ai_project_agent.py --repo-root /home/runner/work/Mais-Aquivos-2024/Mais-Aquivos-2024
 
 # Via comando CLI instalado pelo pyproject
 mais-arquivos-agent --repo-root /home/runner/work/Mais-Aquivos-2024/Mais-Aquivos-2024
 
-# Saída em JSON
+# Saída em JSON (inclui started_at e duration_seconds)
 mais-arquivos-agent --output json
+
+# Pular análise de mudanças
+mais-arquivos-agent --skip-analyze-changes
 
 # Gravar resumo em arquivo (exige aprovação explícita)
 mais-arquivos-agent --summary-file reports/agent-summary.txt --approve-write
