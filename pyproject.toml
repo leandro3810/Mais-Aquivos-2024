@@ -63,5 +63,5 @@ warn_unused_ignores = true
 no_implicit_reexport = true
 # Trata ausência de retorno explícito como erro.
 warn_no_return = true
-# Exige anotações em funções públicas (remove para adoção gradual).
+# Exige anotações em funções públicas (descomente para forçar anotações em todas as funções).
 # disallow_untyped_defs = true

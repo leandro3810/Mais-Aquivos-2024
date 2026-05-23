@@ -5,8 +5,8 @@ Cada teste aplica uma folha de estilo a um documento XML de exemplo e
 verifica que o conteúdo esperado aparece no resultado transformado.  Todas
 as folhas de estilo usam XSLT 1.0 e são processadas via ``lxml.etree.XSLT``.
 
-Exceção
--------
+Nota
+----
 ``appcompat_delailed_bidi.xsl`` declara ``version="2.0"``, que não é
 suportado pelo lxml.  Esse arquivo é testado apenas para verificar se é
 XML bem-formado e contém os elementos esperados de uma folha de estilo.

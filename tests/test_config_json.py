@@ -111,12 +111,12 @@ class TestConfigJson(unittest.TestCase):
     def test_all_excluded_patterns_are_strings(self):
         """Todos os itens de 'excluded_patterns' devem ser strings."""
         for pattern in self.config["excluded_patterns"]:
-            self.assertIsInstance(pattern, str, f"Non-string pattern: {pattern!r}")
+            self.assertIsInstance(pattern, str, f"Padrão não-string: {pattern!r}")
 
     def test_all_included_patterns_are_strings(self):
         """Todos os itens de 'included_patterns' devem ser strings."""
         for pattern in self.config["included_patterns"]:
-            self.assertIsInstance(pattern, str, f"Non-string pattern: {pattern!r}")
+            self.assertIsInstance(pattern, str, f"Padrão não-string: {pattern!r}")
 
     def test_no_duplicate_excluded_patterns(self):
         """Não deve haver padrões duplicados em 'excluded_patterns'."""
@@ -162,9 +162,9 @@ class TestSnapshotsPackageJson(unittest.TestCase):
         """'version' deve seguir o formato semver (MAJOR.MINOR.PATCH)."""
         version = self.pkg["version"]
         parts = version.split(".")
-        self.assertEqual(len(parts), 3, f"Version '{version}' is not semver")
+        self.assertEqual(len(parts), 3, f"Versão '{version}' não está no formato semver")
         for part in parts:
-            self.assertTrue(part.isdigit(), f"Non-numeric version segment: '{part}'")
+            self.assertTrue(part.isdigit(), f"Segmento de versão não-numérico: '{part}'")
 
     def test_scripts_field_exists(self):
         """Deve existir o campo 'scripts'."""
@@ -231,12 +231,12 @@ class TestRootPackageJson(unittest.TestCase):
     def test_each_language_has_id(self):
         """Cada entrada em 'contributes.languages' deve ter o campo 'id'."""
         for lang in self.pkg["contributes"]["languages"]:
-            self.assertIn("id", lang, f"Language entry missing 'id': {lang}")
+            self.assertIn("id", lang, f"Entrada de linguagem sem 'id': {lang}")
 
     def test_each_grammar_has_scope_name(self):
         """Cada entrada em 'contributes.grammars' deve ter o campo 'scopeName'."""
         for grammar in self.pkg["contributes"]["grammars"]:
-            self.assertIn("scopeName", grammar, f"Grammar entry missing 'scopeName': {grammar}")
+            self.assertIn("scopeName", grammar, f"Entrada de gramática sem 'scopeName': {grammar}")
 
     def test_engines_field_present(self):
         """Deve existir o campo 'engines' especificando a versão mínima do VS Code."""
