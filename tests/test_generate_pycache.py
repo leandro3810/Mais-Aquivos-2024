@@ -1,8 +1,17 @@
 """
-Tests for .snapshots/Generate_pycache.py
+Testes para .snapshots/Generate_pycache.py.
 
-The script scans the current working directory for .py files and compiles
-each one (excluding itself) into __pycache__ using py_compile.
+O script varre o diretório de trabalho em busca de arquivos ``.py`` e
+compila cada um (exceto a si mesmo) em ``__pycache__`` usando
+``py_compile``.
+
+Estratégia de testes
+---------------------
+Os testes usam ``unittest.mock`` para isolar completamente o sistema de
+arquivos e o compilador, de modo que nenhum arquivo real é criado ou
+compilado durante a execução da suíte.  O script é executado via
+``runpy.run_path``, que evita a importação permanente do módulo no
+``sys.modules``.
 """
 
 import importlib
@@ -14,6 +23,7 @@ from io import StringIO
 from unittest.mock import MagicMock, call, patch
 
 
+# Caminho absoluto para o script que será testado.
 SCRIPT_PATH = os.path.join(
     os.path.dirname(__file__),
     "..",
@@ -23,7 +33,20 @@ SCRIPT_PATH = os.path.join(
 
 
 def _run_script(fake_cwd, fake_files):
-    """Helper: run the script with a mocked filesystem and return stdout."""
+    """Executa o script com sistema de arquivos simulado e captura a saída.
+
+    Faz mock de ``os.getcwd``, ``os.listdir``, ``py_compile.compile`` e
+    ``sys.stdout`` para isolar completamente o script do ambiente real.
+
+    Args:
+        fake_cwd: Caminho fictício retornado por ``os.getcwd()``.
+        fake_files: Lista de nomes de arquivo retornada por ``os.listdir()``.
+
+    Returns:
+        Tupla ``(stdout_str, mock_compile)`` onde *stdout_str* é tudo que
+        o script imprimiu no stdout e *mock_compile* é o mock de
+        ``py_compile.compile`` para inspeção das chamadas.
+    """
     buf = StringIO()
     with patch("os.getcwd", return_value=fake_cwd), \
          patch("os.listdir", return_value=fake_files), \
@@ -34,9 +57,10 @@ def _run_script(fake_cwd, fake_files):
 
 
 class TestGeneratePycache(unittest.TestCase):
+    """Testa o comportamento do script Generate_pycache.py."""
 
     def test_compiles_single_python_file(self):
-        """A single .py file (not the script itself) should be compiled."""
+        """Um único arquivo .py (diferente do script) deve ser compilado."""
         output, mock_compile = _run_script("/fake/dir", ["mymodule.py"])
 
         mock_compile.assert_called_once_with(
@@ -46,7 +70,7 @@ class TestGeneratePycache(unittest.TestCase):
         self.assertIn("Compilação concluída", output)
 
     def test_compiles_multiple_python_files(self):
-        """All .py files other than the script itself should be compiled."""
+        """Todos os arquivos .py (exceto o script) devem ser compilados."""
         files = ["alpha.py", "beta.py", "gamma.py"]
         output, mock_compile = _run_script("/fake/dir", files)
 
@@ -61,19 +85,19 @@ class TestGeneratePycache(unittest.TestCase):
             self.assertIn(f"Compilando {name}", output)
 
     def test_skips_lowercase_generate_pycache(self):
-        """The script excludes 'generate_pycache.py' (lowercase) by name."""
+        """O script exclui 'generate_pycache.py' (minúsculas) do processo."""
         output, mock_compile = _run_script(
             "/fake/dir", ["generate_pycache.py", "util.py"]
         )
 
-        # util.py must be compiled; generate_pycache.py must be skipped
+        # util.py deve ser compilado; generate_pycache.py deve ser ignorado.
         mock_compile.assert_called_once_with(
             "util.py", cfile="__pycache__/util.pyc"
         )
         self.assertNotIn("Compilando generate_pycache.py", output)
 
     def test_ignores_non_python_files(self):
-        """Non-.py files (txt, json, xml, …) should not be compiled."""
+        """Arquivos que não terminam em .py não devem ser compilados."""
         files = ["README.txt", "config.json", "data.xml", "image.png"]
         output, mock_compile = _run_script("/fake/dir", files)
 
@@ -81,29 +105,30 @@ class TestGeneratePycache(unittest.TestCase):
         self.assertIn("Compilação concluída", output)
 
     def test_empty_directory(self):
-        """An empty directory should produce no compile calls."""
+        """Um diretório vazio não deve gerar nenhuma chamada a py_compile."""
         output, mock_compile = _run_script("/fake/empty", [])
 
         mock_compile.assert_not_called()
         self.assertIn("Compilação concluída", output)
 
     def test_mixed_file_types(self):
-        """Only .py files (except the script name) are compiled."""
+        """Apenas arquivos .py (exceto o nome do script) devem ser compilados."""
         files = [
             "app.py",
             "utils.py",
             "notes.txt",
             "schema.json",
-            "generate_pycache.py",
+            "generate_pycache.py",  # deve ser ignorado pelo script
         ]
         output, mock_compile = _run_script("/fake/dir", files)
 
+        # Somente app.py e utils.py devem ser compilados.
         self.assertEqual(mock_compile.call_count, 2)
         compiled = {c.args[0] for c in mock_compile.call_args_list}
         self.assertSetEqual(compiled, {"app.py", "utils.py"})
 
     def test_cfile_path_uses_pycache_subdir(self):
-        """Compiled output paths are always inside __pycache__/."""
+        """O destino de compilação deve estar dentro do subdiretório __pycache__/."""
         output, mock_compile = _run_script("/proj", ["service.py"])
 
         _, kwargs = mock_compile.call_args
@@ -115,12 +140,12 @@ class TestGeneratePycache(unittest.TestCase):
         )
 
     def test_output_message_contains_filename(self):
-        """Each compiled file name appears in the printed progress line."""
+        """A mensagem de progresso deve incluir o nome do arquivo compilado."""
         output, _ = _run_script("/fake", ["parser.py"])
         self.assertIn("parser.py", output)
 
     def test_completion_message_always_printed(self):
-        """The final completion message is always printed, even with no files."""
+        """A mensagem de conclusão deve sempre ser impressa, mesmo sem arquivos."""
         output, _ = _run_script("/empty", [])
         self.assertIn("Compilação concluída", output)
         self.assertIn("__pycache__", output)

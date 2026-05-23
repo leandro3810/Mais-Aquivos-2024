@@ -18,3 +18,50 @@ mais-arquivos-agent = "ai_project_agent:main"
 
 [tool.setuptools]
 py-modules = ["ai_project_agent"]
+
+# ---------------------------------------------------------------------------
+# Ruff — linter e formatador rápido para Python
+# Instale com: pip install ruff
+# Execute com: ruff check . && ruff format --check .
+# ---------------------------------------------------------------------------
+[tool.ruff]
+# Diretórios e arquivos ignorados na análise.
+exclude = [".git", "__pycache__", ".snapshots"]
+# Versão mínima do Python alvo para sugestões de compatibilidade.
+target-version = "py310"
+# Comprimento máximo de linha (equivalente ao padrão PEP 8 estendido).
+line-length = 100
+
+[tool.ruff.lint]
+# Conjuntos de regras habilitados:
+#   E/W  — erros e avisos de estilo (equivalente ao pycodestyle)
+#   F    — erros lógicos detectados pelo Pyflakes
+#   I    — ordenação de imports (equivalente ao isort)
+#   UP   — sugestões de modernização de código (pyupgrade)
+#   B    — bugs comuns detectados pelo flake8-bugbear
+select = ["E", "W", "F", "I", "UP", "B"]
+# Regras desabilitadas individualmente:
+#   E501 — comprimento de linha (controlado por line-length acima)
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+# Separa imports de terceiros dos imports de biblioteca padrão.
+known-first-party = ["ai_project_agent"]
+
+# ---------------------------------------------------------------------------
+# Mypy — verificador estático de tipos para Python
+# Instale com: pip install mypy
+# Execute com: mypy ai_project_agent.py
+# ---------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.10"
+# Reporta erros em módulos sem anotações de tipo.
+warn_return_any = true
+# Exige que todos os módulos importados tenham stubs ou anotações.
+warn_unused_ignores = true
+# Não permite redefinição acidental de variáveis tipadas.
+no_implicit_reexport = true
+# Trata ausência de retorno explícito como erro.
+warn_no_return = true
+# Exige anotações em funções públicas (remove para adoção gradual).
+# disallow_untyped_defs = true
