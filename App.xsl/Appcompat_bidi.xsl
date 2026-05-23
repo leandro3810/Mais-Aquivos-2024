@@ -11,7 +11,7 @@
             <head>
                 <title>Compatibilidade Bidi</title>
             </head>
-            <body>
+            <body style="direction: {$bidi-direction};">
                 <h1>Transformação Bidirecional</h1>
                 <p>Direção configurada: <xsl:value-of select="$bidi-direction" /></p>
                 <div>
