@@ -1,2 +1,2 @@
 # Test dependencies
-lxml>=4.9.0
+lxml>=6.1.2
