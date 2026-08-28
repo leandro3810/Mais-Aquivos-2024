@@ -11,7 +11,7 @@ Este repositório reúne arquivos de snapshot, transformações XSLT e um agente
 ```
 Mais-Aquivos-2024/
 ├── ai_project_agent.py    # Agente MVP de automação (v0.2.0)
-├── App.xsl                # Transformações XSLT e arquivos XML
+├── App.xsl/               # Diretório com transformações XSLT e arquivos XML
 ├── .snapshots/            # Arquivos de configuração e utilitários
 ├── tests/                 # Suíte de testes automatizados
 ├── pyproject.toml         # Configuração do projeto Python e CLI
