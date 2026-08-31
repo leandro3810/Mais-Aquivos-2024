@@ -7,7 +7,7 @@ ruby '3.2.2'
 # Dependências do projeto
 gem 'rails', '~> 7.0.8'
 gem 'pg', '~> 1.5' # Para PostgreSQL como banco de dados
-gem 'puma', '~> 6.4' # Servidor de aplicação
+gem 'puma', '~> 6.4', '>= 6.4.3' # Servidor de aplicação
 gem 'sass-rails', '>= 6.0.0'
 gem 'webpacker', '~> 5.4.4'
 
