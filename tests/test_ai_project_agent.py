@@ -277,6 +277,25 @@ class TestAgentOrchestrator(unittest.TestCase):
         self.assertIsNone(summary["changes"])
         self.assertEqual(summary["status"], "success")
 
+    def test_execute_simple_workflow(self):
+        """Fluxo simple deve executar apenas testes e manter demais etapas como None."""
+        summary = self.orchestrator.execute(
+            workflow="simple",
+            run_tests=True,
+            run_config_validation=False,
+            run_analyze_changes=False,
+            test_command=["python3", "-c", "print('ok')"],
+        )
+        self.assertEqual(summary["workflow"], "simple")
+        self.assertIsNone(summary["changes"])
+        self.assertIsNone(summary["config_validation"])
+        self.assertTrue(summary["tests"]["success"])
+
+    def test_execute_invalid_workflow(self):
+        """Workflow inválido deve lançar ValueError."""
+        with self.assertRaises(ValueError):
+            self.orchestrator.execute(workflow="unknown")
+
     def test_render_text_includes_version_and_timestamps(self):
         """O sumário em texto deve conter a versão, 'Iniciado em:' e 'Duração:'."""
         summary = self.orchestrator.execute(
