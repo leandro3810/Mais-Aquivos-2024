@@ -49,6 +49,9 @@ __version__ = "0.3.0"
 # Comando padrão para descoberta e execução de testes Python via unittest.
 DEFAULT_TEST_COMMAND = ["python3", "-m", "unittest", "discover", "-s", "tests", "-v"]
 
+# Timeout padrão aplicado a comandos externos para evitar travamentos indefinidos.
+DEFAULT_COMMAND_TIMEOUT_SECONDS = 30
+
 # Arquivos de configuração JSON que o agente valida por padrão.
 DEFAULT_CONFIG_FILES = [
     "package.json",
@@ -214,6 +217,25 @@ class ToolLayer:
         joined = " ".join(command).lower()
         return any(pattern in joined for pattern in DESTRUCTIVE_COMMAND_PATTERNS)
 
+    @staticmethod
+    def _normalize_timeout(timeout_seconds: float | int | None) -> float:
+        """Valida e normaliza o timeout de execução de subprocessos."""
+        if timeout_seconds is None:
+            return float(DEFAULT_COMMAND_TIMEOUT_SECONDS)
+        if timeout_seconds <= 0:
+            raise ValueError("timeout_seconds deve ser maior que zero")
+        return float(timeout_seconds)
+
+    @staticmethod
+    def _validate_command(command: list[str]) -> None:
+        """Valida estrutura básica do comando antes da execução."""
+        if not command:
+            raise ValueError("command deve conter ao menos um item")
+        if any(not isinstance(token, str) for token in command):
+            raise TypeError("command deve conter apenas strings")
+        if any(not token.strip() for token in command):
+            raise ValueError("command não pode conter argumentos vazios")
+
     def _to_repo_relative(self, path: str | Path) -> Path:
         """Converte *path* para um caminho relativo à raiz do repositório.
 
@@ -283,7 +305,23 @@ class ToolLayer:
             - ``error`` (str): Mensagem de erro do stderr (vazia em caso de sucesso).
         """
         command = ["git", "-C", str(self.repo_root), "status", "--porcelain"]
-        result = subprocess.run(command, capture_output=True, text=True, check=False)
+        try:
+            result = subprocess.run(
+                command,
+                capture_output=True,
+                text=True,
+                check=False,
+                timeout=DEFAULT_COMMAND_TIMEOUT_SECONDS,
+            )
+        except subprocess.TimeoutExpired:
+            payload = {
+                "success": False,
+                "changed_files": [],
+                "has_changes": False,
+                "error": "Timeout ao executar git status",
+            }
+            self.memory.add("analyze_changes", "failed", payload["error"])
+            return payload
 
         files = []
         for line in result.stdout.splitlines():
@@ -302,7 +340,12 @@ class ToolLayer:
         self.memory.add("analyze_changes", "ok" if payload["success"] else "failed", str(payload))
         return payload
 
-    def run_command(self, command: list[str], allow_destructive: bool = False) -> dict:
+    def run_command(
+        self,
+        command: list[str],
+        allow_destructive: bool = False,
+        timeout_seconds: float | int | None = None,
+    ) -> dict:
         """Executa um comando de sistema com verificação de segurança.
 
         Por padrão, qualquer comando que contenha padrões destrutivos é
@@ -314,6 +357,8 @@ class ToolLayer:
                 (ex.: ``["python3", "-m", "pytest"]``).
             allow_destructive: Se ``True``, desabilita a verificação de
                 padrões destrutivos para este comando.
+            timeout_seconds: Limite de tempo para execução do comando. Quando
+                ``None``, usa :data:`DEFAULT_COMMAND_TIMEOUT_SECONDS`.
 
         Returns:
             Dicionário com as chaves:
@@ -327,18 +372,37 @@ class ToolLayer:
         Raises:
             AgentError: Se o comando contiver padrões destrutivos e
                 *allow_destructive* for ``False``.
+            ValueError: Se o comando for vazio, possuir argumentos vazios,
+                ou se *timeout_seconds* for menor/igual a zero.
+            TypeError: Se o comando contiver itens não-string.
         """
+        self._validate_command(command)
+        timeout = self._normalize_timeout(timeout_seconds)
+
         # Bloqueia o comando antes de lançá-lo se for considerado destrutivo.
         if self._is_destructive_command(command) and not allow_destructive:
             raise AgentError("Comando bloqueado por política de segurança")
 
-        result = subprocess.run(
-            command,
-            cwd=self.repo_root,
-            capture_output=True,
-            text=True,
-            check=False,  # Não levanta exceção em caso de falha; verificamos returncode.
-        )
+        try:
+            result = subprocess.run(
+                command,
+                cwd=self.repo_root,
+                capture_output=True,
+                text=True,
+                check=False,  # Não levanta exceção em caso de falha; verificamos returncode.
+                timeout=timeout,
+            )
+        except subprocess.TimeoutExpired as exc:
+            payload = {
+                "command": command,
+                "returncode": 124,
+                "success": False,
+                "stdout": exc.stdout or "",
+                "stderr": f"Comando excedeu timeout de {timeout:g}s",
+            }
+            self.memory.add("run_command", "failed", "timeout")
+            return payload
+
         payload = {
             "command": command,
             "returncode": result.returncode,

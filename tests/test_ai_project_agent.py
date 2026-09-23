@@ -21,6 +21,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 
 # Adiciona a raiz do repositório ao sys.path para que a importação funcione
@@ -196,6 +197,35 @@ class TestToolLayer(unittest.TestCase):
         """Comandos com 'rm -rf' devem ser bloqueados pela política de segurança."""
         with self.assertRaises(AgentError):
             self.tools.run_command(["bash", "-lc", "rm -rf /tmp/something"])
+
+    def test_run_command_rejects_empty_command(self):
+        """Comando vazio deve ser rejeitado com ValueError."""
+        with self.assertRaises(ValueError):
+            self.tools.run_command([])
+
+    def test_run_command_rejects_non_string_tokens(self):
+        """Todos os argumentos do comando devem ser strings."""
+        with self.assertRaises(TypeError):
+            self.tools.run_command(["python3", "-c", 123])  # type: ignore[list-item]
+
+    def test_run_command_timeout_returns_failure(self):
+        """Comando que ultrapassa timeout deve retornar erro controlado."""
+        result = self.tools.run_command(
+            ["python3", "-c", "import time; time.sleep(1)"],
+            timeout_seconds=0.1,
+        )
+        self.assertFalse(result["success"])
+        self.assertEqual(result["returncode"], 124)
+        self.assertIn("timeout", result["stderr"].lower())
+
+    def test_analyze_changes_timeout_returns_failure(self):
+        """Timeout em git status deve retornar payload de falha sem exceção."""
+        with patch("ai_project_agent.subprocess.run", side_effect=subprocess.TimeoutExpired("git", 30)):
+            result = self.tools.analyze_changes()
+
+        self.assertFalse(result["success"])
+        self.assertEqual(result["changed_files"], [])
+        self.assertIn("timeout", result["error"].lower())
 
 
 # ---------------------------------------------------------------------------
