@@ -521,6 +521,9 @@ class AgentOrchestrator:
         """
         if workflow not in {"mvp", "simple"}:
             raise ValueError("workflow deve ser 'mvp' ou 'simple'")
+        if workflow == "simple":
+            run_analyze_changes = False
+            run_config_validation = False
 
         started_at = datetime.now(timezone.utc)
 
