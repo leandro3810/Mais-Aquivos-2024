@@ -39,6 +39,8 @@ O agente executa um fluxo simples em três camadas:
 ### Segurança aplicada no agente
 
 - Bloqueia comandos destrutivos (`rm -rf`, `git reset --hard`, `git clean -fdx`)
+- Rejeita comandos vazios ou com argumentos inválidos
+- Aplica timeout padrão na execução de comandos externos para evitar travamentos
 - Exige `--approve-write` para gravar arquivo
 - Bloqueia escrita em caminhos sensíveis (`.git`, `.github/workflows`, `SECURITY.md`)
 
@@ -105,7 +107,7 @@ Os snapshots registram o estado do projeto em datas específicas:
 
 | Pacote | Versão |
 |--------|--------|
-| `lxml` | `>=4.9.0` (teste) |
+| `lxml` | `>=6.1.3` (teste) |
 | `setuptools` | `>=61.0` (build) |
 
 > Dependências extras de projeto (Django, numpy, pandas, requests, scikit-learn) estão declaradas em `.snapshots/Requirements.txt`.
