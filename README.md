@@ -1,7 +1,7 @@
 # Mais Arquivos 2024 — Projeto de automação
 
 [![Python](https://img.shields.io/badge/python-%3E%3D3.10-blue)](https://www.python.org/)
-[![Versão](https://img.shields.io/badge/versão-0.2.0-green)](pyproject.toml)
+[![Versão](https://img.shields.io/badge/versão-0.3.0-green)](pyproject.toml)
 [![Licença](https://img.shields.io/badge/licença-MIT-lightgrey)](LICENSE)
 
 Este repositório reúne arquivos de snapshot, transformações XSLT e um agente Python de automação para validar o projeto.
@@ -10,7 +10,7 @@ Este repositório reúne arquivos de snapshot, transformações XSLT e um agente
 
 ```
 Mais-Aquivos-2024/
-├── ai_project_agent.py    # Agente MVP de automação (v0.2.0)
+├── ai_project_agent.py    # Agente MVP de automação (v0.3.0)
 ├── App.xsl/               # Diretório com transformações XSLT e arquivos XML
 ├── .snapshots/            # Arquivos de configuração e utilitários
 ├── tests/                 # Suíte de testes automatizados
@@ -67,6 +67,9 @@ mais-arquivos-agent --output json
 
 # Pular análise de mudanças
 mais-arquivos-agent --skip-analyze-changes
+
+# Executar fluxo simplificado (apenas testes)
+mais-arquivos-agent --simple-mode
 
 # Gravar resumo em arquivo (exige aprovação explícita)
 mais-arquivos-agent --summary-file reports/agent-summary.txt --approve-write

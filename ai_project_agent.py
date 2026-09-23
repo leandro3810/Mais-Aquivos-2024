@@ -39,7 +39,7 @@ from pathlib import Path
 from typing import Iterable
 
 # Versão do módulo — deve permanecer sincronizada com pyproject.toml.
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 
 # ---------------------------------------------------------------------------
@@ -486,6 +486,7 @@ class AgentOrchestrator:
         run_config_validation: bool = True,
         run_analyze_changes: bool = True,
         test_command: list[str] | None = None,
+        workflow: str = "mvp",
     ) -> dict:
         """Executa o fluxo MVP e retorna um sumário completo da execução.
 
@@ -500,6 +501,8 @@ class AgentOrchestrator:
             run_analyze_changes: Se ``True``, detecta mudanças no repositório.
             test_command: Comando customizado para os testes. Passa direto
                 para :meth:`ToolLayer.run_tests`.
+            workflow: Identificador do fluxo em execução (``"mvp"`` ou
+                ``"simple"``).
 
         Returns:
             Dicionário com as chaves:
@@ -516,12 +519,18 @@ class AgentOrchestrator:
             - ``memory`` (list[dict]): Registros do histórico de execução.
             - ``status`` (str): ``"success"`` ou ``"failed"``.
         """
+        if workflow not in {"mvp", "simple"}:
+            raise ValueError("workflow deve ser 'mvp' ou 'simple'")
+        if workflow == "simple":
+            run_analyze_changes = False
+            run_config_validation = False
+
         started_at = datetime.now(timezone.utc)
 
         # Inicializa o sumário com valores padrão; campos de etapas ficam None
         # até que a etapa correspondente seja executada.
         summary: dict = {
-            "workflow": "mvp",
+            "workflow": workflow,
             "version": __version__,
             "started_at": started_at.isoformat(timespec="seconds"),
             "duration_seconds": None,
@@ -568,7 +577,7 @@ class AgentOrchestrator:
             incluindo versão, timestamps, status e erros de configuração.
         """
         lines = [
-            f"Resumo do agente (MVP) v{summary.get('version', '')}",
+            f"Resumo do agente ({summary.get('workflow', 'mvp').upper()}) v{summary.get('version', '')}",
             f"Iniciado em: {summary.get('started_at', '-')}",
             f"Duração: {summary.get('duration_seconds', '-')}s",
             f"Status final: {summary['status']}",
@@ -627,6 +636,11 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Pula análise de mudanças no repositório",
     )
     parser.add_argument(
+        "--simple-mode",
+        action="store_true",
+        help="Executa um fluxo simplificado (apenas etapa de testes)",
+    )
+    parser.add_argument(
         "--output",
         choices=["text", "json"],
         default="text",
@@ -659,11 +673,20 @@ def main() -> int:
     orchestrator = AgentOrchestrator(tools)
 
     # Executa o fluxo MVP respeitando os flags de controle da CLI.
-    summary = orchestrator.execute(
-        run_tests=not args.skip_tests,
-        run_config_validation=not args.skip_config_validation,
-        run_analyze_changes=not args.skip_analyze_changes,
-    )
+    if args.simple_mode:
+        summary = orchestrator.execute(
+            run_tests=not args.skip_tests,
+            run_config_validation=False,
+            run_analyze_changes=False,
+            workflow="simple",
+        )
+    else:
+        summary = orchestrator.execute(
+            run_tests=not args.skip_tests,
+            run_config_validation=not args.skip_config_validation,
+            run_analyze_changes=not args.skip_analyze_changes,
+            workflow="mvp",
+        )
 
     # Renderiza o sumário no formato solicitado pelo usuário.
     if args.output == "json":
