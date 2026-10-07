@@ -94,6 +94,13 @@ O projeto possui uma suíte de testes automatizados cobrindo:
 python3 -m unittest discover -s tests -v
 ```
 
+## Análise de segurança com CodeQL
+
+O workflow `.github/workflows/codeql.yml` analisa o código Python com as consultas
+`security-extended` do CodeQL em pushes e pull requests para `main`, semanalmente
+e sob demanda pela aba Actions. Os resultados são publicados como alertas de
+code scanning no GitHub.
+
 ## Snapshots
 
 Os snapshots registram o estado do projeto em datas específicas:
